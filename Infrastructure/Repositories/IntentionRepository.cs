@@ -1,8 +1,4 @@
-﻿using Domain.Entities;
-using Domain.Interfaces;
-using Infrastructure.Data;
-
-namespace Infrastructure.Repositories
+﻿namespace Infrastructure.Repositories
 {
     public class IntentionRepository : IIntentionRepository
     {
@@ -14,12 +10,21 @@ namespace Infrastructure.Repositories
 
         public IQueryable<Intention> GetAll()
         {
-            return _context.Intentions;
+            return _context.Intentions
+                .Include(x => x.Detail);
         }
 
         public Intention GetById(int id)
         {
-            return _context.Intentions.SingleOrDefault(x => x.Id == id);
+            return _context.Intentions
+                .Include(x => x.Detail)
+                .SingleOrDefault(x => x.Id == id);
+        }
+
+        public IQueryable<Intention> GetByDate(DateTime date)
+        {
+            return _context.Intentions
+                .Where(x => x.MassDate == date);
         }
 
         public Intention Add(Intention intention)

@@ -1,15 +1,4 @@
-﻿using Application.Dto;
-using Application.Interfaces;
-using AutoMapper;
-using Domain.Entities;
-using Domain.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Application.Services
+﻿namespace Application.Services
 {
     public class IntentionService : IIntentionService
     {
@@ -21,15 +10,21 @@ namespace Application.Services
             _mapper = mapper;
         }
 
-        public IEnumerable<IntentionDto> GetAllIntentions()
+        public ListIntentionsDto GetAllIntentions()
         {
             var intentions = _intentionRepository.GetAll();
-            return _mapper.Map<IEnumerable<IntentionDto>>(intentions);
+            return _mapper.Map<ListIntentionsDto>(intentions);
         }
 
         public IntentionDto GetIntentionById(int id)
         {
             var intention = _intentionRepository.GetById(id);
+            return _mapper.Map<IntentionDto>(intention);
+        }
+
+        public IntentionDto GetIntentionsByDate(DateTime date)
+        {
+            var intention = _intentionRepository.GetByDate(date);
             return _mapper.Map<IntentionDto>(intention);
         }
 
@@ -41,6 +36,13 @@ namespace Application.Services
             }
 
             var intention = _mapper.Map<Intention>(newIntention);
+
+            intention.Detail = new IntentionDetail()
+            {
+                Created = DateTime.Now,
+                LastModified = DateTime.Now
+            };
+
             _intentionRepository.Add(intention);
             return _mapper.Map<IntentionDto>(intention);
         }
@@ -53,7 +55,9 @@ namespace Application.Services
             }
 
             var existingIntention = _intentionRepository.GetById(id);
+
             var updatedIntention = _mapper.Map(intention, existingIntention);
+            updatedIntention.Detail.LastModified = DateTime.Now;
             _intentionRepository.Update(updatedIntention);
         }
 

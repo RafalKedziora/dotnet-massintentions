@@ -4,6 +4,7 @@ using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(MyIntentionsContext))]
-    partial class MyIntentionsContextModelSnapshot : ModelSnapshot
+    [Migration("20220107220100_CreateCategoriesTable")]
+    partial class CreateCategoriesTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -64,50 +66,6 @@ namespace Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Intentions", (string)null);
-                });
-
-            modelBuilder.Entity("Domain.Entities.IntentionDetail", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<DateTime>("Created")
-                        .HasPrecision(0)
-                        .HasColumnType("datetime2(0)");
-
-                    b.Property<int>("IntentionId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("LastModified")
-                        .HasPrecision(0)
-                        .HasColumnType("datetime2(0)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("IntentionId")
-                        .IsUnique();
-
-                    b.ToTable("IntentionDetails", (string)null);
-                });
-
-            modelBuilder.Entity("Domain.Entities.IntentionDetail", b =>
-                {
-                    b.HasOne("Domain.Entities.Intention", "Intention")
-                        .WithOne("Detail")
-                        .HasForeignKey("Domain.Entities.IntentionDetail", "IntentionId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Intention");
-                });
-
-            modelBuilder.Entity("Domain.Entities.Intention", b =>
-                {
-                    b.Navigation("Detail")
-                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }

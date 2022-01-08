@@ -13,6 +13,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 builder.Services.AddScoped<IIntentionRepository, IntentionRepository>();
 builder.Services.AddScoped<IIntentionService, IntentionService>();
+builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
+builder.Services.AddScoped<ICategoryService, CategoryService>();
 
 builder.Services.AddSingleton(AutoMapperConfig.Initialize());
 

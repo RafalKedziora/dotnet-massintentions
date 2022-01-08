@@ -1,12 +1,4 @@
-﻿using Domain.Entities;
-using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Infrastructure.Data
+﻿namespace Infrastructure.Data
 {
     public class MyIntentionsContext : DbContext
     {
@@ -15,9 +7,11 @@ namespace Infrastructure.Data
         }
 
         public DbSet<Intention> Intentions { get; set; }
+        public DbSet<Category> Categories { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            #region Intention
             modelBuilder.Entity<Intention>().ToTable("Intentions");
             modelBuilder.Entity<Intention>().HasKey(x => x.Id);
             modelBuilder.Entity<Intention>()
@@ -27,6 +21,42 @@ namespace Infrastructure.Data
             modelBuilder.Entity<Intention>()
                 .Property(x => x.Content)
                 .HasMaxLength(500);
+            modelBuilder.Entity<Intention>()
+                .Property(p => p.MassDate)
+                .HasColumnType("datetime2").HasPrecision(0)
+                .IsRequired();
+            modelBuilder.Entity<Intention>()
+                .HasOne(x => x.Detail)
+                .WithOne(y => y.Intention)
+                .HasForeignKey<IntentionDetail>(nd => nd.IntentionId);
+
+            #endregion
+
+            #region Category
+
+            modelBuilder.Entity<Category>().ToTable("Categories");
+            modelBuilder.Entity<Category>().HasKey(x => x.Id);
+            modelBuilder.Entity<Category>()
+                .Property(p => p.Name)
+                .HasMaxLength(100)
+                .IsRequired();
+
+            #endregion
+
+            #region IntentionDetail
+
+            modelBuilder.Entity<IntentionDetail>().ToTable("IntentionDetails");
+            modelBuilder.Entity<IntentionDetail>().HasKey(x => x.Id);
+            modelBuilder.Entity<IntentionDetail>()
+                .Property(p => p.Created)
+                .HasColumnType("datetime2").HasPrecision(0)
+                .IsRequired();
+            modelBuilder.Entity<IntentionDetail>()
+                .Property(p => p.LastModified)
+                .HasColumnType("datetime2").HasPrecision(0)
+                .IsRequired();
+
+            #endregion
         }
     }
 }

@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Application.Dto
+﻿namespace Application.Dto
 {
-    public class IntentionDto
+    public class UpdateIntentionDto
     {
         public int Id { get; set; }
         public string Title { get; set; }
