@@ -6,6 +6,7 @@
         public string Title { get; set; }
         public string Content { get; set; }
         public DateTime MassDate { get; set; }
+        public CategoryDto Category { get; set; }
         public DateTime LastModified { get; set; }
     }
 }

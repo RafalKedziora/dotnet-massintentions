@@ -3,16 +3,26 @@
     public class IntentionService : IIntentionService
     {
         private readonly IIntentionRepository _intentionRepository;
+        private readonly ICategoryRepository _categoryRepository;
         private readonly IMapper _mapper;
-        public IntentionService(IIntentionRepository intentionRepository, IMapper mapper)
+        public IntentionService(IIntentionRepository intentionRepository, ICategoryRepository categoryRepository, IMapper mapper)
         {
             _intentionRepository = intentionRepository;
             _mapper = mapper;
+            _categoryRepository = categoryRepository;
         }
 
         public ListIntentionsDto GetAllIntentions()
         {
             var intentions = _intentionRepository.GetAll();
+            return _mapper.Map<ListIntentionsDto>(intentions);
+        }
+
+        public ListIntentionsDto SearchByKeyword(string keyword)
+        {
+            keyword = keyword.ToLowerInvariant();
+            var intentions = _intentionRepository.GetAll()
+                .Where(x => x.Title.ToLowerInvariant().Contains(keyword) || x.Content.ToLowerInvariant().Contains(keyword));
             return _mapper.Map<ListIntentionsDto>(intentions);
         }
 
@@ -22,10 +32,10 @@
             return _mapper.Map<IntentionDto>(intention);
         }
 
-        public IntentionDto GetIntentionsByDate(DateTime date)
+        public ListIntentionsDto GetIntentionsByDate(DateTime date)
         {
-            var intention = _intentionRepository.GetByDate(date);
-            return _mapper.Map<IntentionDto>(intention);
+            var intentions = _intentionRepository.GetByDate(date);
+            return _mapper.Map<ListIntentionsDto>(intentions);
         }
 
         public IntentionDto AddNewIntention(CreateIntentionDto newIntention)
@@ -33,6 +43,12 @@
             if(string.IsNullOrEmpty(newIntention.Title))
             {
                 throw new Exception("Intention can't have an empty title");
+            }
+            
+            var category = _categoryRepository.GetById(newIntention.CategoryId);
+            if(category == null)
+            {
+                throw new Exception("This category does not exist");
             }
 
             var intention = _mapper.Map<Intention>(newIntention);
@@ -52,6 +68,12 @@
             if (string.IsNullOrEmpty(intention.Title))
             {
                 throw new Exception("Intention can't have an empty title");
+            }
+
+            var category = _categoryRepository.GetById(intention.CategoryId);
+            if (category == null)
+            {
+                throw new Exception("This category does not exist");
             }
 
             var existingIntention = _intentionRepository.GetById(id);

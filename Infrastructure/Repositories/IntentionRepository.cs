@@ -11,20 +11,24 @@
         public IQueryable<Intention> GetAll()
         {
             return _context.Intentions
-                .Include(x => x.Detail);
+                .Include(x => x.Detail)
+                .Include(x => x.Category);
         }
 
         public Intention GetById(int id)
         {
             return _context.Intentions
                 .Include(x => x.Detail)
+                .Include(x => x.Category)
                 .SingleOrDefault(x => x.Id == id);
         }
 
         public IQueryable<Intention> GetByDate(DateTime date)
         {
             return _context.Intentions
-                .Where(x => x.MassDate == date);
+                .Where(x => x.MassDate == date)
+                .Include(x => x.Detail)
+                .Include(x => x.Category);
         }
 
         public Intention Add(Intention intention)

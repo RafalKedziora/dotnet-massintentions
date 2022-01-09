@@ -23,6 +23,14 @@ namespace WebAPI.Controllers
             return Ok(intentions);
         }
 
+        [SwaggerOperation(Summary = "Retrieves a specific intentions by keyword")]
+        [HttpGet("Search/{keyword}")]
+        public IActionResult Search(string keyword)
+        {
+            var intentions = _intentionService.SearchByKeyword(keyword);
+            return Ok(intentions);
+        }
+
         [SwaggerOperation(Summary = "Retrieves a specific intention by unique id")]
         [HttpGet("{id}")]
         public IActionResult Get(int id)

@@ -12,6 +12,7 @@
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             #region Intention
+
             modelBuilder.Entity<Intention>().ToTable("Intentions");
             modelBuilder.Entity<Intention>().HasKey(x => x.Id);
             modelBuilder.Entity<Intention>()
@@ -29,6 +30,10 @@
                 .HasOne(x => x.Detail)
                 .WithOne(y => y.Intention)
                 .HasForeignKey<IntentionDetail>(nd => nd.IntentionId);
+            modelBuilder.Entity<Intention>()
+                .HasOne(x => x.Category)
+                .WithMany(y => y.Intentions)
+                .HasForeignKey(c => c.CategoryId);
 
             #endregion
 
@@ -36,6 +41,7 @@
 
             modelBuilder.Entity<Category>().ToTable("Categories");
             modelBuilder.Entity<Category>().HasKey(x => x.Id);
+            modelBuilder.Entity<Category>().HasIndex(c => c.Name).IsUnique();
             modelBuilder.Entity<Category>()
                 .Property(p => p.Name)
                 .HasMaxLength(100)
