@@ -18,6 +18,18 @@ builder.Services.AddScoped<ICategoryService, CategoryService>();
 
 builder.Services.AddSingleton(AutoMapperConfig.Initialize());
 
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(
+        optBuilder =>
+        {
+            optBuilder.WithOrigins("http://localhost:8080")
+                .AllowAnyMethod()
+                .AllowAnyHeader()
+                .AllowCredentials();
+        });
+});
+
 builder.Services.AddDbContext<MyIntentionsContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("MyIntentionsCS")));
 
@@ -36,6 +48,8 @@ app.UseSwagger();
 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "WebAPI v1"));
 
 app.UseHttpsRedirection();
+
+app.UseCors();
 
 app.UseAuthorization();
 
