@@ -36,23 +36,12 @@ namespace WebAPI.Controllers
         public IActionResult Get(int id)
         {
             var intention = _intentionService.GetIntentionById(id);
-            if(intention == null)
+            if (intention == null)
             {
                 return NotFound();
             }
-            return Ok(intention);
-        }
 
-        [SwaggerOperation(Summary = "Retrieves all intentions in a specific date")]
-        [HttpGet("{date}")]
-        public IActionResult Get(DateTime date)
-        {
-            var intentions = _intentionService.GetIntentionsByDate(date);
-            if (intentions == null)
-            {
-                return NotFound();
-            }
-            return Ok(intentions);
+            return Ok(intention);
         }
 
         [SwaggerOperation(Summary = "Create a new intention")]
