@@ -1,0 +1,90 @@
+<template>
+  <table class="intention-table">
+    <thead>
+      <tr>
+        <th v-for="(name, index) in columnNames" :key="index">
+          {{ name }}
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr v-for="intention in filteredIntentions" :key="intention.id">
+        <td>
+          <router-link :to="`/mass/${intention.id}`">{{intention.title}}</router-link>
+        </td>
+        <td v-for="(value, index) in viewable(intention)" :key="index">
+          {{ value }}
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</template>
+
+<script>
+export default {
+  name: "IntentionTable",
+  props: {
+    intentions: Array,
+    columnNames: Array,
+    filters: Object
+  },
+  computed: {
+    filteredIntentions: function () {
+      let filteredItems = [...this.intentions.map(x => Object.assign({}, x))]
+
+      for(const key in this.filters){
+        filteredItems = filteredItems.filter(x => this.filters[key].test(x[key]))
+      }
+
+      return filteredItems
+    }
+  },
+
+  methods: {
+    viewable: function (intention) {
+      let res = {...intention}
+
+      delete res.id
+      delete res.title
+      return res
+    }
+  }
+}
+</script>
+
+<style scoped>
+table{
+  min-width: 800px;
+  overflow-x: scroll;
+}
+
+table, tr, th{
+  border-collapse: collapse;
+}
+
+th, td{
+  padding: 10px 20px;
+  color: rgba(255, 255, 255, 1);
+}
+
+table{
+  width: 100%;
+  margin: 20px 0;
+}
+
+thead{
+  height: 50px;
+  background-color: rgba(88, 47, 14, 0.8);
+}
+
+tbody tr{
+  height: 40px;
+  text-align: center;
+  background-color: rgba(127, 79, 36, 0.6);
+  white-space: pre-wrap;
+}
+
+td a {
+  color: rgba(255, 255, 255, 1);
+}
+</style>
