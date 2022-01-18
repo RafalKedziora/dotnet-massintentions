@@ -1,20 +1,54 @@
+using Application.Dto;
 using Application.Interfaces;
 using Application.Mappings;
 using Application.Services;
+using Domain.Entities;
 using Domain.Interfaces;
+using FluentValidation;
+using FluentValidation.AspNetCore;
 using Infrastructure.Data;
 using Infrastructure.Repositories;
+using Infrastructure.Validators;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using WebAPI;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
-
+var authenticationSettings = new AuthenticationSettings();
 // Add services to the container.
 
 builder.Services.AddControllers();
+builder.Services.AddControllers().AddFluentValidation();
 builder.Services.AddScoped<IIntentionRepository, IntentionRepository>();
 builder.Services.AddScoped<IIntentionService, IntentionService>();
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
+builder.Services.AddScoped<IAccountRepository, AccountRepository>();
+builder.Services.AddScoped<IAccountService, AccountService>();
+builder.Services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
+builder.Services.AddScoped<IValidator<RegisterUserDto>, RegisterUserDtoValidator>();
+
+#region Authentication
+builder.Configuration.GetSection("Authentication").Bind(authenticationSettings);
+builder.Services.AddAuthentication(option =>
+{
+    option.DefaultAuthenticateScheme = "Bearer";
+    option.DefaultScheme = "Bearer";
+    option.DefaultChallengeScheme = "Bearer";
+}).AddJwtBearer(cfg =>
+{
+    cfg.RequireHttpsMetadata = false;
+    cfg.SaveToken = true;
+    cfg.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidIssuer = authenticationSettings.JwtIssuer,
+        ValidAudience = authenticationSettings.JwtIssuer,
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(authenticationSettings.JwtKey)),
+    };
+});
+#endregion
 
 builder.Services.AddSingleton(AutoMapperConfig.Initialize());
 
@@ -29,9 +63,10 @@ builder.Services.AddCors(options =>
                 .AllowCredentials();
         });
 });
-
 builder.Services.AddDbContext<MyIntentionsContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("MyIntentionsCS")));
+builder.Services.AddTransient<UsersAndRolesSeeder>();
+
 
 builder.Services.AddSwaggerGen(c =>
 {
@@ -40,6 +75,17 @@ builder.Services.AddSwaggerGen(c =>
 });
 
 var app = builder.Build();
+SeedData(app);
+
+void SeedData(WebApplication app)
+{
+    var scopedFactory = app.Services.GetService<IServiceScopeFactory>();
+    using (var scope = scopedFactory.CreateScope())
+    {
+        var service = scope.ServiceProvider.GetService<UsersAndRolesSeeder>();
+        service.Seed();
+    }
+}
 
 // Configure the HTTP request pipeline.
 
@@ -47,6 +93,7 @@ app.UseDeveloperExceptionPage();
 app.UseSwagger();
 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "WebAPI v1"));
 
+app.UseAuthentication();
 app.UseHttpsRedirection();
 
 app.UseCors();
