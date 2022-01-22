@@ -1,0 +1,180 @@
+<template>
+  <form class="intention-edit" @submit.prevent="saveChanges">
+    <div class="title-section">
+      <h1>
+        Edycja danych
+      </h1>
+      <div class="buttons">
+        <image-button
+          caption="Usuń"
+          image-src="remove-icon.svg"
+          :task="deleteItem"
+        />
+        <image-button
+          caption="Zapisz"
+          image-src="save-icon.svg"
+          :task="() => ''"
+        />
+      </div>
+
+    </div>
+    <div class="inputs" v-if="intention !== undefined" >
+      <input-with-label
+        label="Tytuł"
+        name="title"
+        input-type="text"
+        v-model="intention.title"
+      />
+      <div class="inline-container">
+        <div class="left">
+          <input-with-label
+            label="Data mszy"
+            name="massDate"
+            input-type="datetime-local"
+            v-model="intention.massDate"
+          />
+        </div>
+        <div class="right">
+          <select-with-label
+            label="Kategoria"
+            name="category"
+            :all-values="categories"
+            property-to-ref="id"
+            property-to-show="name"
+            v-model="intention.category"
+          />
+        </div>
+      </div>
+      <input-with-label
+        label="Treść intencji"
+        name="content"
+        input-type="textarea"
+        v-model="intention.content"
+        class="fill-container"
+      />
+    </div>
+  </form>
+</template>
+
+<script>
+import InputWithLabel from "@/components/InputWithLabel"
+import SelectWithLabel from "@/components/SelectWithLabel"
+import ImageButton from "@/components/ImageButton"
+import {ApiService} from "@/services/api-service"
+const APIService = new ApiService()
+
+export default {
+  name: "IntentionEdit",
+  components: {
+    InputWithLabel,
+    SelectWithLabel,
+    ImageButton
+  },
+
+  data(){
+    return {
+      intention: undefined,
+      categories: undefined,
+    }
+  },
+
+  computed: {
+    apiModel: function () {
+      return {
+        id: this.intention.id,
+        title: this.intention.title,
+        content: this.intention.content,
+        massDate: this.intention.massDate,
+        categoryId: this.intention.category.id
+      }
+    }
+  },
+
+  methods: {
+    saveChanges: async function () {
+      const [error] = await APIService.updateIntention(
+        this.intention.id,
+        this.apiModel
+      );
+
+      if(error){
+        console.error(error)
+        return
+      }
+
+      await this.$router.push('/')
+    },
+
+    deleteItem: async function () {
+      const [error] = await APIService.deleteIntention(this.intention.id);
+
+      if(error){
+        console.error(error)
+        return
+      }
+
+      await this.$router.push('/')
+    }
+  },
+
+  async created(){
+    const [intentionError, intention] = await APIService.getIntentionById(this.$route.params.id)
+    const [categoryError, categories] = await APIService.getCategories()
+
+    if(intentionError || categoryError){
+      await this.$router.push('/404')
+    }
+
+    this.intention = intention
+    this.categories = categories
+  },
+}
+</script>
+
+<style scoped>
+.title-section{
+  display: flex;
+  justify-content: space-between;
+  height: 60px;
+}
+
+h1{
+  font-size: 2rem;
+  color: rgba(57, 29, 6, 1);
+}
+
+.intention-edit{
+  flex: 1;
+  padding: 40px 50px;
+  height: 100%;
+
+  display: flex;
+  flex-direction: column;
+}
+
+.buttons{
+  display: flex;
+}
+
+.inputs{
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  flex: 1;
+}
+
+.inline-container{
+  display: flex;
+}
+
+.left, .right{
+  flex-basis: 0;
+  flex-grow: 1;
+  flex: 1;
+  width: 40%;
+}
+
+.fill-container{
+  flex: 1;
+}
+</style>

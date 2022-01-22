@@ -1,22 +1,42 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import Home from '../views/Home.vue'
+import IntentionList from "@/views/IntentionList"
 
 Vue.use(VueRouter)
 
 const routes = [
   {
     path: '/',
-    name: 'Home',
-    component: Home
+    redirect: '/list'
   },
   {
-    path: '/about',
-    name: 'About',
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "about" */ '../views/About.vue')
+    path: '/list',
+    name: 'IntentionList',
+    component: IntentionList
+  },
+  {
+    path: '/mass/add',
+    name: 'IntentionAdd',
+    component: () => import('../views/IntentionAdd')
+  },
+  {
+    path: '/mass/:id',
+    name: 'IntentionEdit',
+    component: () => import('../views/IntentionEdit')
+  },
+  {
+    path: '/category/add',
+    name: 'CategoryAdd',
+    component: () => import('../views/CategoryAdd')
+  },
+  {
+    path: '/404',
+    name: 'ErrorPage',
+    component: () => import('../views/ErrorPage')
+  },
+  {
+    path: '*',
+    redirect: '/404'
   }
 ]
 
