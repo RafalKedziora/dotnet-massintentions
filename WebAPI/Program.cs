@@ -37,6 +37,7 @@ try
     builder.Services.AddScoped<IAccountService, AccountService>();
     builder.Services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
     builder.Services.AddScoped<ErrorHandlingMiddleware>();
+    builder.Services.AddSingleton(authenticationSettings);
 
     #region Validators
 
@@ -69,7 +70,6 @@ try
     #endregion
 
     builder.Services.AddSingleton(AutoMapperConfig.Initialize());
-    builder.Services.AddSingleton(authenticationSettings);
 
     builder.Services.AddCors(options =>
     {
