@@ -1,9 +1,12 @@
 <template>
   <form class="intention-add" @submit.prevent="saveChanges">
     <div class="title-section">
-      <h1>
-        Dodawanie nowej intencji
-      </h1>
+      <aside class="title">
+        <h1>
+          Dodawanie nowej intencji
+        </h1>
+        <go-back-button />
+      </aside>
       <div class="buttons">
         <image-button
           caption="Zapisz"
@@ -55,6 +58,7 @@
 import InputWithLabel from "@/components/InputWithLabel"
 import SelectWithLabel from "@/components/SelectWithLabel"
 import ImageButton from "@/components/ImageButton"
+import GoBackButton from "@/components/GoBackButton"
 import {ApiService} from "@/services/api-service"
 const APIService = new ApiService()
 
@@ -63,7 +67,8 @@ export default {
   components: {
     InputWithLabel,
     SelectWithLabel,
-    ImageButton
+    ImageButton,
+    GoBackButton
   },
 
   data(){
@@ -91,16 +96,14 @@ export default {
 
   methods: {
     saveChanges: async function () {
-      const [error] = await APIService.addIntention(
-        this.apiModel
-      );
+      const [error] = await APIService.addIntention(this.apiModel);
 
       if(error){
         console.error(error)
         return
       }
 
-      await this.$router.push('/')
+      await this.$router.push('/list')
     },
   },
 
@@ -137,8 +140,13 @@ export default {
   flex-direction: column;
 }
 
-.buttons{
+.buttons, .title{
   display: flex;
+}
+
+.title button{
+  align-self: flex-start;
+  margin-top: 8px;
 }
 
 .inputs{

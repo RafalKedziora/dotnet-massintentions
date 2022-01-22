@@ -2,27 +2,13 @@
   <section class="intention-list">
     <div class="title-section">
       <h1>
-        Wyszukiwanie intencji mszalnych
+        Pulpit ambony
       </h1>
-      <aside class="buttons">
-        <image-button
-          caption="Dodaj nową kategorię"
-          image-src="add-category-icon.svg"
-          :task="goToAddCategoryMenu"
-        />
-        <image-button
-          caption="Dodaj nową intencję"
-          image-src="add-icon.svg"
-          :task="goToAddMassMenu"
-        />
-      </aside>
     </div>
-    <intention-filters @filter="setFilters"/>
     <intention-table
       v-if="intentionsCount > 0"
       :intentions="intentions"
       :column-names="columns"
-      :filters="filters"
     />
     <loader v-else></loader>
   </section>
@@ -30,20 +16,16 @@
 
 <script>
 import IntentionTable from "@/components/IntentionTable"
-import IntentionFilters from "@/components/IntentionFilters"
-import ImageButton from "@/components/ImageButton"
 import Loader from "@/components/Loader"
 import {ApiService} from "@/services/api-service"
 
 const APIService = new ApiService()
 
 export default {
-  name: "IntentionList",
+  name: "Desktop",
 
   components: {
     IntentionTable,
-    IntentionFilters,
-    ImageButton,
     Loader
   },
 
@@ -57,8 +39,7 @@ export default {
         'Data mszy',
         'Kategoria',
         'Data modyfikacji',
-      ],
-      filters: {},
+      ]
     }
   },
 
@@ -79,20 +60,6 @@ export default {
     this.intentions = intentions
     this.intentionsCount = count
   },
-
-  methods: {
-    setFilters: function(value) {
-      this.filters = value
-    },
-
-    goToAddMassMenu: function () {
-      this.$router.push('/mass/add')
-    },
-
-    goToAddCategoryMenu: function () {
-      this.$router.push('/category/add')
-    }
-  }
 }
 </script>
 

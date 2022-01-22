@@ -97,4 +97,18 @@ export class ApiService {
       return [error, error.response?.status]
     }
   }
+
+  async register(model) {
+    try {
+      const { data, headers } = await this.httpService.post(
+        `/Account/register`,
+        model
+      )
+      return [null, data, { headers }]
+    }
+    catch (error) {
+      console.error(error)
+      return [error, error.response?.status]
+    }
+  }
 }

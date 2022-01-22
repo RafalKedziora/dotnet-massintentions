@@ -1,18 +1,33 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import IntentionList from "@/views/IntentionList"
+import Login from "@/views/Login"
 
 Vue.use(VueRouter)
 
 const routes = [
   {
     path: '/',
-    redirect: '/list'
+    redirect: '/login'
+  },
+  {
+    path: '/login',
+    name: 'Login',
+    component: Login
+  },
+  {
+    path: '/register',
+    name: 'Register',
+    component: () => import('../views/Register')
   },
   {
     path: '/list',
     name: 'IntentionList',
-    component: IntentionList
+    component: () => import('../views/IntentionList')
+  },
+  {
+    path: '/desktop',
+    name: 'Desktop',
+    component: () => import('../views/Desktop')
   },
   {
     path: '/mass/add',
@@ -39,6 +54,12 @@ const routes = [
     redirect: '/404'
   }
 ]
+
+const originalPush = VueRouter.prototype.push;
+
+VueRouter.prototype.push = function push(location) {
+  return originalPush.call(this, location).catch(() => {});
+};
 
 const router = new VueRouter({
   mode: 'history',

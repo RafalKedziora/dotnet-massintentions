@@ -1,9 +1,12 @@
 <template>
   <form class="intention-add" @submit.prevent="saveChanges">
     <div class="title-section">
-      <h1>
-        Dodawanie nowej intencji
-      </h1>
+      <aside class="title">
+        <h1>
+          Dodawanie nowej kategorii
+        </h1>
+        <go-back-button />
+      </aside>
       <div class="buttons">
         <image-button
           caption="Zapisz"
@@ -27,6 +30,7 @@
 <script>
 import InputWithLabel from "@/components/InputWithLabel"
 import ImageButton from "@/components/ImageButton"
+import GoBackButton from "@/components/GoBackButton";
 import {ApiService} from "@/services/api-service"
 const APIService = new ApiService()
 
@@ -34,7 +38,8 @@ export default {
   name: "CategoryAdd",
   components: {
     InputWithLabel,
-    ImageButton
+    ImageButton,
+    GoBackButton
   },
 
   data(){
@@ -69,7 +74,7 @@ export default {
         return
       }
 
-      await this.$router.push('/')
+      await this.$router.push('/list')
     },
   },
 
@@ -106,8 +111,13 @@ export default {
   flex-direction: column;
 }
 
-.buttons{
+.buttons, .title{
   display: flex;
+}
+
+.title button{
+  align-self: flex-start;
+  margin-top: 8px;
 }
 
 .inputs{
@@ -115,20 +125,5 @@ export default {
   flex-direction: column;
   justify-content: space-between;
   flex: 1;
-}
-
-.inline-container{
-  display: flex;
-}
-
-.left, .right{
-  flex-basis: 0;
-  flex-grow: 1;
-  flex: 1;
-  width: 40%;
-}
-
-.fill-container{
-  height: 100%;
 }
 </style>
