@@ -15,37 +15,10 @@
     </div>
     <div class="inputs">
       <input-with-label
-        label="Tytuł"
+        label="Nazwa"
         name="title"
         input-type="text"
-        v-model="intention.title"
-      />
-      <div class="inline-container">
-        <div class="left">
-          <input-with-label
-            label="Data mszy"
-            name="massDate"
-            input-type="datetime-local"
-            v-model="intention.massDate"
-          />
-        </div>
-        <div class="right">
-          <select-with-label
-            label="Kategoria"
-            name="category"
-            :all-values="categories"
-            property-to-ref="id"
-            property-to-show="name"
-            v-model="intention.category"
-          />
-        </div>
-      </div>
-      <input-with-label
-        label="Treść intencji"
-        name="content"
-        input-type="textarea"
-        v-model="intention.content"
-        class="fill-container"
+        v-model="category.name"
       />
     </div>
   </form>
@@ -53,26 +26,21 @@
 
 <script>
 import InputWithLabel from "@/components/InputWithLabel"
-import SelectWithLabel from "@/components/SelectWithLabel"
 import ImageButton from "@/components/ImageButton"
 import {ApiService} from "@/services/api-service"
 const APIService = new ApiService()
 
 export default {
-  name: "IntentionEdit",
+  name: "CategoryAdd",
   components: {
     InputWithLabel,
-    SelectWithLabel,
     ImageButton
   },
 
   data(){
     return {
-      intention: {
-        title: '',
-        content: '',
-        massDate: '',
-        category: {}
+      category: {
+        name: ''
       },
       categories: undefined,
     }
@@ -81,19 +49,20 @@ export default {
   computed: {
     apiModel: function () {
       return {
-        title: this.intention.title,
-        content: this.intention.content,
-        massDate: this.intention.massDate,
-        categoryId: this.intention.category.id
+        name: this.category.name,
       }
     }
   },
 
   methods: {
     saveChanges: async function () {
-      const [error] = await APIService.addIntention(
-        this.apiModel
-      );
+      if(this.categories.find(x => x.name === this.category.name)){
+        console.log("Category already exists");
+        // tu bedzie popup
+        return;
+      }
+
+      const [error] = await APIService.addCategory(this.apiModel);
 
       if(error){
         console.error(error)

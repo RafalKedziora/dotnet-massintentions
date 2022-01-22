@@ -1,6 +1,6 @@
 import axios from "axios"
 
-export class IntentionApiService {
+export class ApiService {
   constructor() {
     this.httpService = axios.create({
       baseURL: "https://localhost:7098/api",
@@ -75,6 +75,20 @@ export class IntentionApiService {
     try {
       const { data, headers } = await this.httpService.delete(
         `/Intention/${id}`,
+      )
+      return [null, data, { headers }]
+    }
+    catch (error) {
+      console.error(error)
+      return [error, error.response?.status]
+    }
+  }
+
+  async addCategory(model) {
+    try {
+      const { data, headers } = await this.httpService.post(
+        `/Categories`,
+        model
       )
       return [null, data, { headers }]
     }
