@@ -1,4 +1,4 @@
-﻿namespace WebAPI
+﻿namespace Domain.Entities
 {
     public class AuthenticationSettings
     {

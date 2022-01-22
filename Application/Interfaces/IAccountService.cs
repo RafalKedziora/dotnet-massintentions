@@ -4,6 +4,6 @@
     {
         IEnumerable<UserDto> GetAllUsers();
         public UserDto RegisterUser(RegisterUserDto dto);
-        public void LoginUser(LoginUserDto dto);
+        string GenerateJwt(LoginUserDto dto);
     }
 }
