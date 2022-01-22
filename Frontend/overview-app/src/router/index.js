@@ -25,6 +25,11 @@ const routes = [
     component: () => import('../views/IntentionEdit')
   },
   {
+    path: '/category/add',
+    name: 'CategoryAdd',
+    component: () => import('../views/CategoryAdd')
+  },
+  {
     path: '/404',
     name: 'ErrorPage',
     component: () => import('../views/ErrorPage')

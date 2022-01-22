@@ -60,8 +60,8 @@
 import InputWithLabel from "@/components/InputWithLabel"
 import SelectWithLabel from "@/components/SelectWithLabel"
 import ImageButton from "@/components/ImageButton"
-import {IntentionApiService} from "@/services/intention-api-service"
-const APIService = new IntentionApiService()
+import {ApiService} from "@/services/api-service"
+const APIService = new ApiService()
 
 export default {
   name: "IntentionEdit",
@@ -138,7 +138,7 @@ export default {
   height: 60px;
 }
 
-.title-section h1{
+h1{
   font-size: 2rem;
   color: rgba(57, 29, 6, 1);
 }
