@@ -30,7 +30,8 @@
                 cfg.CreateMap<User, UserDto>();
                 cfg.CreateMap<RegisterUserDto, User>()
                 .ForMember(dest => dest.PasswordHash, act => act.MapFrom(src => src.Password));
-                cfg.CreateMap<LoginUserDto, User>();
+                cfg.CreateMap<LoginUserDto, User>()
+                .ForMember(dest => dest.PasswordHash, act => act.MapFrom(src => src.Password));
 
                 #endregion
             }).CreateMapper();

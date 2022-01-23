@@ -13,9 +13,12 @@
             return _context.Users;
         }
 
-        public User Login(User user)
+        public User GetUser(User user)
         {
-            return _context.Users.FirstOrDefault(u => u.Id == user.Id);
+            var existingUser = _context.Users
+                .Include(u => u.Role)
+                .FirstOrDefault(u => u.Email == user.Email);
+            return existingUser;
         }
 
         public User Register(User user)

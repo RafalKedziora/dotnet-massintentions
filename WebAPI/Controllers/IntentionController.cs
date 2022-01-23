@@ -1,5 +1,6 @@
 ﻿using Application.Dto;
 using Application.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 
@@ -7,6 +8,7 @@ namespace WebAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class IntentionController : ControllerBase
     {
         private readonly IIntentionService _intentionService;
@@ -17,6 +19,7 @@ namespace WebAPI.Controllers
 
         [SwaggerOperation(Summary = "Retrieves all intentions")]
         [HttpGet]
+        [AllowAnonymous]
         public IActionResult Get()
         {
             var intentions = _intentionService.GetAllIntentions();
@@ -58,6 +61,7 @@ namespace WebAPI.Controllers
 
         [SwaggerOperation(Summary = "Create a new intention")]
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public IActionResult Create(CreateIntentionDto newIntention)
         {
             var intention = _intentionService.AddNewIntention(newIntention);
@@ -66,6 +70,7 @@ namespace WebAPI.Controllers
 
         [SwaggerOperation(Summary = "Update an existing intention")]
         [HttpPut("{id}")]
+        [Authorize(Roles = "Admin")]
         public IActionResult Update(int id, UpdateIntentionDto updateIntention)
         {
             _intentionService.UpdateIntention(id, updateIntention);
@@ -74,6 +79,7 @@ namespace WebAPI.Controllers
 
         [SwaggerOperation(Summary = "Delete a specific intention")]
         [HttpDelete("{id}")]
+        [Authorize(Roles = "Admin")]
         public IActionResult Delete(int id)
         {
             _intentionService.DeleteIntention(id);
