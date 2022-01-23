@@ -27,6 +27,16 @@ namespace Application.Services
             return _mapper.Map<IEnumerable<UserDto>>(categories);
         }
 
+        public string GetUserRole(string email)
+        {
+            var user = _accountRepository.GetUserByEmail(email);
+            if(user is null)
+            {
+                return null;
+            }
+            return user.Role.Name;
+        }
+
         public string GenerateJwt(LoginUserDto dto)
         {
             var currentUser = _mapper.Map<User>(dto);

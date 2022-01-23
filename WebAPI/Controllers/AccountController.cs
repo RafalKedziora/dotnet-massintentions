@@ -21,6 +21,14 @@ namespace WebAPI.Controllers
             _logger.LogDebug(1, "NLog injected into AccountController");
         }
 
+        [SwaggerOperation(Summary = "Get active user role")]
+        [HttpGet("Role")]
+        public ActionResult GetUserRole(string email)
+        {
+            string role = _accountService.GetUserRole(email);
+            return Ok(role);
+        }
+
         [SwaggerOperation(Summary = "Register new user")]
         [HttpPost("Register")]
         public ActionResult RegisterUser([FromBody] RegisterUserDto dto)

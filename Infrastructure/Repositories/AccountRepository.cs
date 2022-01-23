@@ -21,6 +21,14 @@
             return existingUser;
         }
 
+        public User GetUserByEmail(string email)
+        {
+            var existingUser = _context.Users
+                .Include(u => u.Role)
+                .FirstOrDefault(u => u.Email == email);
+            return existingUser;
+        }
+
         public User Register(User user)
         {
             _context.Users.Add(user);
