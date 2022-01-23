@@ -1,6 +1,9 @@
 <template>
   <div class="intention-input__item">
-    <label :for="name">{{ label }}</label>
+    <label
+      :for="name"
+      :class="{'label-big': big}"
+    >{{ label }}</label>
     <textarea
       v-if="inputType === 'textarea'"
       v-model="inputValue"
@@ -8,6 +11,7 @@
       maxlength="500"
       @input="emitData"
       required="required"
+      :class="{'input-big': big}"
     />
     <input
       v-else
@@ -18,6 +22,7 @@
       minlength="2"
       maxlength="60"
       required="required"
+      :class="{'input-big': big}"
     >
   </div>
 </template>
@@ -30,6 +35,7 @@ export default {
     name: String,
     value: String,
     inputType: String,
+    big: Boolean
   },
   data(){
     return{
@@ -45,6 +51,17 @@ export default {
 </script>
 
 <style scoped>
+.label-big{
+  font-size: 2rem !important;
+  font-weight: 700;
+  margin-bottom: 12px;
+}
+
+.input-big{
+  height: 50px !important;
+  font-size: 1.5rem !important;
+}
+
 .intention-input__item{
   display: flex;
   flex-direction: column;

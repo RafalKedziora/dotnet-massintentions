@@ -1,10 +1,13 @@
 <template>
   <form class="intention-edit" @submit.prevent="saveChanges">
     <div class="title-section">
-      <h1>
-        Edycja danych
-      </h1>
-      <div class="buttons">
+      <aside class="title">
+        <h1>
+          Edycja danych
+        </h1>
+        <go-back-button />
+      </aside>
+      <aside class="buttons">
         <image-button
           caption="Usuń"
           image-src="remove-icon.svg"
@@ -15,7 +18,7 @@
           image-src="save-icon.svg"
           :task="() => ''"
         />
-      </div>
+      </aside>
 
     </div>
     <div class="inputs" v-if="intention !== undefined" >
@@ -53,6 +56,7 @@
         class="fill-container"
       />
     </div>
+    <loader v-else></loader>
   </form>
 </template>
 
@@ -60,6 +64,8 @@
 import InputWithLabel from "@/components/InputWithLabel"
 import SelectWithLabel from "@/components/SelectWithLabel"
 import ImageButton from "@/components/ImageButton"
+import GoBackButton from "@/components/GoBackButton"
+import Loader from "@/components/Loader"
 import {ApiService} from "@/services/api-service"
 const APIService = new ApiService()
 
@@ -68,13 +74,16 @@ export default {
   components: {
     InputWithLabel,
     SelectWithLabel,
-    ImageButton
+    ImageButton,
+    GoBackButton,
+    Loader
   },
 
   data(){
     return {
       intention: undefined,
       categories: undefined,
+      apiError: 'Błąd 403: edycja rekordu niedozwolona'
     }
   },
 
@@ -102,7 +111,7 @@ export default {
         return
       }
 
-      await this.$router.push('/')
+      await this.$router.push('/list')
     },
 
     deleteItem: async function () {
@@ -113,15 +122,27 @@ export default {
         return
       }
 
-      await this.$router.push('/')
+      await this.$router.push('/list')
     }
   },
 
   async created(){
+    const email = encodeURI(localStorage.getItem('email'))
+    const [roleError, role] = await APIService.getRoleByEmail(email)
+
+    if(roleError && role !== 'Admin'){
+      await this.$router.push('/list')
+    }
+
     const [intentionError, intention] = await APIService.getIntentionById(this.$route.params.id)
     const [categoryError, categories] = await APIService.getCategories()
 
     if(intentionError || categoryError){
+      if(categories === 403){
+        console.error(this.apiError)
+        await this.$router.push('/list')
+      }
+
       await this.$router.push('/404')
     }
 
@@ -145,15 +166,20 @@ h1{
 
 .intention-edit{
   flex: 1;
-  padding: 40px 50px;
+  padding: 80px 50px 40px 50px;
   height: 100%;
 
   display: flex;
   flex-direction: column;
 }
 
-.buttons{
+.buttons, .title{
   display: flex;
+}
+
+.title button{
+  align-self: flex-start;
+  margin-top: 8px;
 }
 
 .inputs{

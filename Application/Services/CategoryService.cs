@@ -25,17 +25,6 @@
 
         public CategoryDto AddNewCategory(CreateCategoryDto newCategory)
         {
-            if(string.IsNullOrEmpty(newCategory.Name))
-            {
-                throw new Exception("Category can not have an empty name.");
-            }
-
-            var categoryWithSameName = _categoryRepository.GetAll().SingleOrDefault(x => x.Name.ToLowerInvariant() == newCategory.Name.ToLowerInvariant());
-            if(categoryWithSameName != null)
-            {
-                throw new Exception("Category with the same name already exists.");
-            }
-
             var category = _mapper.Map<Category>(newCategory);
             _categoryRepository.Add(category);
             return _mapper.Map<CategoryDto>(category);
@@ -43,17 +32,6 @@
 
         public void UpdateCategory(int id, UpdateCategoryDto updateCategory)
         {
-            if(string.IsNullOrEmpty(updateCategory.Name))
-            {
-                throw new Exception("Category can not have an empty name.");
-            }
-
-            var categoryWithSameName = _categoryRepository.GetAll().SingleOrDefault(x => x.Name.ToLowerInvariant() == updateCategory.Name.ToLowerInvariant());
-            if (categoryWithSameName != null)
-            {
-                throw new Exception("Category with the same name already exists.");
-            }
-
             var existingCategory = _categoryRepository.GetById(id);
             var post = _mapper.Map(updateCategory, existingCategory);
             _categoryRepository.Update(post);

@@ -1,9 +1,12 @@
 <template>
-  <form class="intention-add" @submit.prevent="saveChanges">
+  <form class="category-add" @submit.prevent="saveChanges">
     <div class="title-section">
-      <h1>
-        Dodawanie nowej intencji
-      </h1>
+      <aside class="title">
+        <h1>
+          Dodawanie nowej kategorii
+        </h1>
+        <go-back-button />
+      </aside>
       <div class="buttons">
         <image-button
           caption="Zapisz"
@@ -27,6 +30,7 @@
 <script>
 import InputWithLabel from "@/components/InputWithLabel"
 import ImageButton from "@/components/ImageButton"
+import GoBackButton from "@/components/GoBackButton";
 import {ApiService} from "@/services/api-service"
 const APIService = new ApiService()
 
@@ -34,7 +38,8 @@ export default {
   name: "CategoryAdd",
   components: {
     InputWithLabel,
-    ImageButton
+    ImageButton,
+    GoBackButton
   },
 
   data(){
@@ -43,6 +48,7 @@ export default {
         name: ''
       },
       categories: undefined,
+      apiError: 'Błąd 403: nie możesz dodawać kategorii - poproś administratora'
     }
   },
 
@@ -58,7 +64,6 @@ export default {
     saveChanges: async function () {
       if(this.categories.find(x => x.name === this.category.name)){
         console.log("Category already exists");
-        // tu bedzie popup
         return;
       }
 
@@ -69,15 +74,22 @@ export default {
         return
       }
 
-      await this.$router.push('/')
+      await this.$router.push('/list')
     },
   },
 
   async created(){
+    const email = encodeURI(localStorage.getItem('email'))
     const [categoryError, categories] = await APIService.getCategories()
+    const [roleError, role] = await APIService.getRoleByEmail(email)
+
+    if(roleError || role !== 'Admin'){
+      await this.$router.push('/list')
+    }
 
     if(categoryError){
-      await this.$router.push('/404')
+      console.error(this.apiError)
+      return
     }
 
     this.categories = categories
@@ -97,17 +109,22 @@ export default {
   color: rgba(57, 29, 6, 1);
 }
 
-.intention-add{
+.category-add{
   flex: 1;
-  padding: 40px 50px;
+  padding: 80px 50px 40px 50px;
   height: 100%;
 
   display: flex;
   flex-direction: column;
 }
 
-.buttons{
+.buttons, .title{
   display: flex;
+}
+
+.title button{
+  align-self: flex-start;
+  margin-top: 8px;
 }
 
 .inputs{
@@ -115,20 +132,5 @@ export default {
   flex-direction: column;
   justify-content: space-between;
   flex: 1;
-}
-
-.inline-container{
-  display: flex;
-}
-
-.left, .right{
-  flex-basis: 0;
-  flex-grow: 1;
-  flex: 1;
-  width: 40%;
-}
-
-.fill-container{
-  height: 100%;
 }
 </style>

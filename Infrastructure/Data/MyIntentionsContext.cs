@@ -8,6 +8,8 @@
 
         public DbSet<Intention> Intentions { get; set; }
         public DbSet<Category> Categories { get; set; }
+        public DbSet<User> Users { get; set; }
+        public DbSet<Role> Roles { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -60,6 +62,26 @@
             modelBuilder.Entity<IntentionDetail>()
                 .Property(p => p.LastModified)
                 .HasColumnType("datetime2").HasPrecision(0)
+                .IsRequired();
+
+            #endregion
+
+            #region User
+
+            modelBuilder.Entity<User>()
+                .Property(u => u.Email)
+                .IsRequired();
+            modelBuilder.Entity<User>()
+                .HasOne(x => x.Role)
+                .WithMany(y => y.Users)
+                .HasForeignKey(c => c.RoleId);
+
+            #endregion
+
+            #region Role
+
+            modelBuilder.Entity<Role>()
+                .Property(r => r.Name)
                 .IsRequired();
 
             #endregion
