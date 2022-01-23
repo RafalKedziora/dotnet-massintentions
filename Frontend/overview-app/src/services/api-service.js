@@ -1,11 +1,15 @@
 import axios from "axios"
+import { CookieService } from "@/services/cookie-service"
 
 export class ApiService {
   constructor() {
     this.httpService = axios.create({
       baseURL: "https://localhost:7098/api",
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': '*',
+        'Authorization': `Bearer ${CookieService.getSessionToken()}`,
+        'Accept': 'application/json'
       }
     })
   }
@@ -38,7 +42,6 @@ export class ApiService {
       return [null, data, { headers }]
     }
     catch (error) {
-      console.error(error)
       return [error, error.response?.status]
     }
   }
@@ -101,7 +104,21 @@ export class ApiService {
   async register(model) {
     try {
       const { data, headers } = await this.httpService.post(
-        `/Account/register`,
+        `/Account/Register`,
+        model
+      )
+      return [null, data, { headers }]
+    }
+    catch (error) {
+      console.error(error)
+      return [error, error.response?.status]
+    }
+  }
+
+  async login(model) {
+    try {
+      const { data, headers } = await this.httpService.post(
+        `/Account/Login`,
         model
       )
       return [null, data, { headers }]

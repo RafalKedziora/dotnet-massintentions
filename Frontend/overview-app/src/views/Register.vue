@@ -101,9 +101,7 @@ export default {
 
   methods: {
     saveChanges: async function () {
-      const [error] = await APIService.register(
-        this.apiModel
-      );
+      const [error] = await APIService.register(this.apiModel);
 
       if(error){
         console.error(error)

@@ -83,6 +83,7 @@ export default {
     return {
       intention: undefined,
       categories: undefined,
+      apiError: 'Błąd 403: edycja rekordu niedozwolona'
     }
   },
 
@@ -130,6 +131,11 @@ export default {
     const [categoryError, categories] = await APIService.getCategories()
 
     if(intentionError || categoryError){
+      if(categories === 403){
+        console.error(this.apiError)
+        await this.$router.push('/list')
+      }
+
       await this.$router.push('/404')
     }
 
@@ -153,7 +159,7 @@ h1{
 
 .intention-edit{
   flex: 1;
-  padding: 40px 50px;
+  padding: 80px 50px 40px 50px;
   height: 100%;
 
   display: flex;

@@ -4,7 +4,7 @@
       <h1>
         Wyszukiwanie intencji mszalnych
       </h1>
-      <aside class="buttons">
+      <aside class="buttons" v-if="isAdmin">
         <image-button
           caption="Dodaj nową kategorię"
           image-src="add-category-icon.svg"
@@ -59,15 +59,21 @@ export default {
         'Data modyfikacji',
       ],
       filters: {},
+      isAdmin: false
     }
   },
 
   async created() {
     const [error, {count, intentions}] = await APIService.getAllIntentions()
+    const [categoryError, categories] = await APIService.getCategories()
 
     if(error){
       console.log(error)
       return
+    }
+
+    if(!categoryError && categories !== 403){
+      this.isAdmin = true
     }
 
     intentions.forEach(x => {
@@ -110,7 +116,7 @@ export default {
 
 .intention-list{
   flex: 1;
-  padding: 60px 50px 40px 50px;
+  padding: 80px 50px 40px 50px;
 }
 
 .buttons{

@@ -10,7 +10,8 @@
     <tbody>
       <tr v-for="intention in filteredIntentions" :key="intention.id">
         <td>
-          <router-link :to="`/mass/${intention.id}`">{{intention.title}}</router-link>
+          <router-link v-if="!isUnlinkable" :to="`/mass/${intention.id}`">{{ intention.title }}</router-link>
+          <p v-else>{{ intention.title }}</p>
         </td>
         <td v-for="(value, index) in viewable(intention)" :key="index">
           {{ value }}
@@ -21,12 +22,20 @@
 </template>
 
 <script>
+import { ApiService } from "@/services/api-service"
+const APIService = new ApiService()
+
 export default {
   name: "IntentionTable",
   props: {
     intentions: Array,
     columnNames: Array,
     filters: Object
+  },
+  data(){
+    return {
+      isUnlinkable: true
+    }
   },
   computed: {
     filteredIntentions: function () {
@@ -47,6 +56,14 @@ export default {
       delete res.id
       delete res.title
       return res
+    }
+  },
+
+  async created() {
+    const [categoryError, categories] = await APIService.getCategories()
+
+    if(!categoryError || categories !== 403){
+      this.isUnlinkable = false
     }
   }
 }

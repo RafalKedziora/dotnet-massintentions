@@ -80,6 +80,7 @@ export default {
         category: {}
       },
       categories: undefined,
+      apiError: 'Błąd 403: nie możesz dodawać intencji mszalnych - poproś administratora'
     }
   },
 
@@ -111,7 +112,11 @@ export default {
     const [categoryError, categories] = await APIService.getCategories()
 
     if(categoryError){
-      await this.$router.push('/404')
+      console.error(this.apiError)
+
+      await this.$router.push(
+        categories === 403 ? '/list' : '/404'
+      )
     }
 
     this.categories = categories
@@ -133,7 +138,7 @@ export default {
 
 .intention-add{
   flex: 1;
-  padding: 40px 50px;
+  padding: 80px 50px 40px 50px;
   height: 100%;
 
   display: flex;

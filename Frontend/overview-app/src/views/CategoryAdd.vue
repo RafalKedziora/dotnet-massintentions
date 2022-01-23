@@ -1,5 +1,5 @@
 <template>
-  <form class="intention-add" @submit.prevent="saveChanges">
+  <form class="category-add" @submit.prevent="saveChanges">
     <div class="title-section">
       <aside class="title">
         <h1>
@@ -48,6 +48,7 @@ export default {
         name: ''
       },
       categories: undefined,
+      apiError: 'Błąd 403: nie możesz dodawać kategorii - poproś administratora'
     }
   },
 
@@ -63,7 +64,6 @@ export default {
     saveChanges: async function () {
       if(this.categories.find(x => x.name === this.category.name)){
         console.log("Category already exists");
-        // tu bedzie popup
         return;
       }
 
@@ -82,7 +82,11 @@ export default {
     const [categoryError, categories] = await APIService.getCategories()
 
     if(categoryError){
-      await this.$router.push('/404')
+      console.error(this.apiError)
+
+      await this.$router.push(
+        categories === 403 ? '/list' : '/404'
+      )
     }
 
     this.categories = categories
@@ -102,9 +106,9 @@ export default {
   color: rgba(57, 29, 6, 1);
 }
 
-.intention-add{
+.category-add{
   flex: 1;
-  padding: 40px 50px;
+  padding: 80px 50px 40px 50px;
   height: 100%;
 
   display: flex;

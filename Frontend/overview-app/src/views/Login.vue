@@ -1,13 +1,13 @@
 <template>
   <section class="login-panel">
-    <div class="login-wrapper">
+    <form class="login-wrapper" @submit.prevent="sendCredentials">
       <div class="login-inputs">
         <input-with-label
           label="Login / email"
-          name="login"
-          input-type="text"
-          v-model="login"
-          class="login-input"
+          name="email"
+          input-type="email"
+          v-model="email"
+          class="email-input"
           :big="true"
         />
         <input-with-label
@@ -18,6 +18,9 @@
           class="login-input"
           :big="true"
         />
+        <p v-if="isPasswordError">
+          Błędny login lub hasło
+        </p>
       </div>
       <div class="login-buttons">
         <image-button
@@ -29,11 +32,11 @@
         <image-button
           caption="ZALOGUJ SIĘ"
           image-src="login-icon.svg"
-          :task="sendCredentials"
+          :task="() => ''"
           class="login-button"
         />
       </div>
-    </div>
+    </form>
     <div class="info-wrapper">
       <h2>INFORMACJE</h2>
       <p>{{ information }}</p>
@@ -44,6 +47,9 @@
 <script>
 import InputWithLabel from "@/components/InputWithLabel"
 import ImageButton from "@/components/ImageButton"
+import {ApiService} from "@/services/api-service"
+
+const APIService = new ApiService()
 
 export default {
   name: "Login",
@@ -51,19 +57,41 @@ export default {
     InputWithLabel,
     ImageButton
   },
+
   data(){
     return{
-      login: '',
+      email: '',
       password: '',
       information: '' +
-        'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ' +
-        'ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco' +
-        ' laboris nisi ut aliquip ex ea commodo consequat.'
+        'Prosimy wszystkich duchownych w parafii o rejestrację kont w nowym systemie do obsługi' +
+        'intencji mszalnych. Odpowiednie uprawienia administracyjne zostały przekazane proboszczowi. ' +
+        'Szkolenie z korzystania z systemu odbędzie się w piątek o 19:00',
+      isPasswordError: false
     }
   },
+
+  computed: {
+    apiModel: function () {
+      return {
+        email: this.email,
+        password: this.password
+      }
+    }
+  },
+
   methods: {
-    sendCredentials: function () {
-      this.$router.push('/list')
+    sendCredentials: async function () {
+      this.isPasswordError = false
+      const [loginError, token] = await APIService.login(this.apiModel)
+
+      if(loginError){
+        this.isPasswordError = true
+        console.error(loginError)
+        return
+      }
+
+      this.$emit('login', {token, email: this.email})
+      await this.$router.push('/list')
     },
 
     goToRegisterPage: function () {
@@ -115,6 +143,12 @@ export default {
 .login-buttons{
   display: flex;
   flex-direction: column;
+}
+
+.login-inputs p{
+  margin-left: 10px;
+  color: rgba(255, 255, 255, 1);
+  font-weight: 700;
 }
 
 .login-input label{
