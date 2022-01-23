@@ -47,7 +47,7 @@
 <script>
 import InputWithLabel from "@/components/InputWithLabel"
 import ImageButton from "@/components/ImageButton"
-import {ApiService} from "@/services/api-service"
+import { ApiService } from "@/services/api-service"
 
 const APIService = new ApiService()
 
@@ -63,7 +63,7 @@ export default {
       email: '',
       password: '',
       information: '' +
-        'Prosimy wszystkich duchownych w parafii o rejestrację kont w nowym systemie do obsługi' +
+        'Prosimy wszystkich duchownych w parafii o rejestrację kont w nowym systemie do obsługi ' +
         'intencji mszalnych. Odpowiednie uprawienia administracyjne zostały przekazane proboszczowi. ' +
         'Szkolenie z korzystania z systemu odbędzie się w piątek o 19:00',
       isPasswordError: false

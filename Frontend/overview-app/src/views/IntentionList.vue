@@ -64,17 +64,21 @@ export default {
   },
 
   async created() {
+    const email = encodeURI(localStorage.getItem('email'))
     const [error, {count, intentions}] = await APIService.getAllIntentions()
-    const [categoryError, categories] = await APIService.getCategories()
+    const [roleError, role] = await APIService.getRoleByEmail(email)
 
     if(error){
-      console.log(error)
+      console.error(error)
       return
     }
 
-    if(!categoryError && categories !== 403){
-      this.isAdmin = true
+    if(roleError){
+      console.error(roleError)
+      return
     }
+
+    this.isAdmin = role === 'Admin'
 
     intentions.forEach(x => {
       x.category = x.category.name

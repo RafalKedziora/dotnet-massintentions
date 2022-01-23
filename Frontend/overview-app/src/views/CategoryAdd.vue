@@ -79,14 +79,17 @@ export default {
   },
 
   async created(){
+    const email = encodeURI(localStorage.getItem('email'))
     const [categoryError, categories] = await APIService.getCategories()
+    const [roleError, role] = await APIService.getRoleByEmail(email)
+
+    if(roleError || role !== 'Admin'){
+      await this.$router.push('/list')
+    }
 
     if(categoryError){
       console.error(this.apiError)
-
-      await this.$router.push(
-        categories === 403 ? '/list' : '/404'
-      )
+      return
     }
 
     this.categories = categories

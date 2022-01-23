@@ -10,7 +10,7 @@
     <tbody>
       <tr v-for="intention in filteredIntentions" :key="intention.id">
         <td>
-          <router-link v-if="!isUnlinkable" :to="`/mass/${intention.id}`">{{ intention.title }}</router-link>
+          <router-link v-if="isAdmin" :to="`/mass/${intention.id}`">{{ intention.title }}</router-link>
           <p v-else>{{ intention.title }}</p>
         </td>
         <td v-for="(value, index) in viewable(intention)" :key="index">
@@ -34,7 +34,7 @@ export default {
   },
   data(){
     return {
-      isUnlinkable: true
+      isAdmin: false
     }
   },
   computed: {
@@ -60,10 +60,11 @@ export default {
   },
 
   async created() {
-    const [categoryError, categories] = await APIService.getCategories()
+    const email = encodeURI(localStorage.getItem('email'))
+    const [roleError, role] = await APIService.getRoleByEmail(email)
 
-    if(!categoryError || categories !== 403){
-      this.isUnlinkable = false
+    if(!roleError && role === 'Admin'){
+      this.isAdmin = true
     }
   }
 }

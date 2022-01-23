@@ -127,6 +127,13 @@ export default {
   },
 
   async created(){
+    const email = encodeURI(localStorage.getItem('email'))
+    const [roleError, role] = await APIService.getRoleByEmail(email)
+
+    if(roleError && role !== 'Admin'){
+      await this.$router.push('/list')
+    }
+
     const [intentionError, intention] = await APIService.getIntentionById(this.$route.params.id)
     const [categoryError, categories] = await APIService.getCategories()
 
