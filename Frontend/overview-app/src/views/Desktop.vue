@@ -9,6 +9,7 @@
       v-if="intentionsCount > 0"
       :intentions="intentions"
       :column-names="columns"
+      :is-desktop="true"
     />
     <loader v-else></loader>
   </section>

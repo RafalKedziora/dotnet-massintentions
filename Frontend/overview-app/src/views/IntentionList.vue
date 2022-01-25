@@ -23,6 +23,7 @@
       :intentions="intentions"
       :column-names="columns"
       :filters="filters"
+      :is-desktop="false"
     />
     <loader v-else></loader>
   </section>

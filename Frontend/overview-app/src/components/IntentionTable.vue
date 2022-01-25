@@ -30,11 +30,12 @@ export default {
   props: {
     intentions: Array,
     columnNames: Array,
-    filters: Object
+    filters: Object,
+    isDesktop: Boolean
   },
   data(){
     return {
-      isAdmin: false
+      isAdmin: false,
     }
   },
   computed: {
@@ -60,6 +61,10 @@ export default {
   },
 
   async created() {
+    if(this.isDesktop){
+      return
+    }
+
     const email = encodeURI(localStorage.getItem('email'))
     const [roleError, role] = await APIService.getRoleByEmail(email)
 
