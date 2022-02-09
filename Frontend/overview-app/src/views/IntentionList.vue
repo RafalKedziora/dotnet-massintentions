@@ -84,7 +84,7 @@ export default {
     intentions.forEach(x => {
       x.category = x.category.name
       x.massDate = x.massDate.replace('T', ' ')
-      x.lastModified = x.massDate.replace('T', ' ')
+      x.lastModified = x.lastModified.replace('T', ' ')
     })
 
     this.intentions = intentions
