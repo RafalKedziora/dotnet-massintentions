@@ -11,7 +11,7 @@
         <image-button
           caption="Zapisz"
           image-src="save-icon.svg"
-          :task="saveChanges"
+          :task="() => ''"
         />
       </div>
 
